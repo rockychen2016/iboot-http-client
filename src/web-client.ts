@@ -64,7 +64,8 @@ export const get = async <T>(urlName: string, opts?: ClientGetParams): Promise<R
     return msg;
 }
 
-export const post = async <T>(url: string, opts?: ClientPostParams): Promise<ResultModel<T>> => {
+export const post = async <T>(urlName: string, opts?: ClientPostParams): Promise<ResultModel<T>> => {
+    const url = getBaseUrl(urlName);
     const data = opts?.data ?? {};
     const heads = opts?.headers;
     let body: string | FormData;
