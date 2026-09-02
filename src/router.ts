@@ -85,7 +85,7 @@ export class HTTPRouter<T,R> {
         logger.debug({ "hostUrl": url, "token": token ? { ...token } : '' }, "processRequest")
         const method = request.method;
         if (method === 'GET') {
-            const params = {...searchParams}
+            const params = new URLSearchParams(searchParams)
             params.delete('m');
             const result = await this.http.get({
                 url,
