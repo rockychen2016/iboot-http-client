@@ -125,20 +125,25 @@ export const setServerHttpCookies = (cookies: ICookies, opts: ServerHttpOptsMin)
     }
 }
 
-export const getToken = (cookies: Record<string, string>): HttpToken | undefined => {
-    if (cookies.get) {
-        const userjson = cookies[COOKIE_NAMES.IBOOT_USER];
-        if (userjson && userjson.length > 0) {
-            const user = JSON.parse(userjson);
-            const username = user.username;
-            const utype = user.userType.toString();
-            const token = cookies[COOKIE_NAMES.IBOOT_TOKEN];
-            if (token) {
-                return {
-                    "username": username,
-                    "utype": utype,
-                    "token": token
-                }
+export const getToken = (cookies: Record<string, string> & { get?: (key: string) => string | undefined }): HttpToken | undefined => {
+    const get = (key: string): string | undefined => {
+        //兼容 ICookies(get方法) 与普通 Record 两种形态
+        if (typeof cookies.get === 'function') {
+            return cookies.get(key);
+        }
+        return cookies[key];
+    };
+    const userjson = get(COOKIE_NAMES.IBOOT_USER);
+    if (userjson && userjson.length > 0) {
+        const user = JSON.parse(userjson);
+        const username = user.username;
+        const utype = user.userType.toString();
+        const token = get(COOKIE_NAMES.IBOOT_TOKEN);
+        if (token) {
+            return {
+                "username": username,
+                "utype": utype,
+                "token": token
             }
         }
     }
